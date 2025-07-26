@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navigationbar.css') }}">
+</head>
+<style>
+    /* Modal background (overlay) */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.modal.show {
+    visibility: visible;
+}
+
+/* Modal content - Smaller and centered */
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+}
+
+/* Form styling */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* Slightly smaller gap */
+    width: 100%; /* Ensure form takes full width */
+}
+
+/* Labels */
+.modal-content label {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 4px;
+}
+
+/* Input and textarea styling */
+.modal-content input,
+.modal-content textarea {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Textarea specific styling */
+.modal-content textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Buttons */
+.modal-content button {
+    padding: 10px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button#delete-btn {
+    background-color: #dc3545;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+.modal-content button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Carousel Styles */
+.carousel-container {
+    width: 90%;
+    margin: 20px auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.room-card {
+    min-width: 300px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #f9f9f9;
+}
+
+.room-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.room-card h3 {
+    margin-bottom: 5px;
+}
+
+.room-card p {
+    margin-bottom: 8px;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    padding: 10px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Form Container */
+.form-container {
+    width: 60%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #f9f9f9;
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-container label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.form-container input,
+.form-container textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-container button {
+    padding: 10px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+</style>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h3>Verde Vista Resort Management System</h3>
+    <p class="subtitle">"Where Hospitality Meets Sustainability"</p>
+    <ul>
+        <li><a href="{{ url_for('admin_home') }}"><i class="fa fa-bar-chart"></i> Dashboard</a></li>
+
+        <!-- Separate Check-In and Check-Out with Icons -->
+        <li><a href="{{ url_for('admin_checkin') }}"><i class="fa fa-sign-in"></i> Check-In</a></li>
+        <li><a href="{{ url_for('admin_checkout') }}"><i class="fa fa-sign-out"></i> Check-Out</a></li>
+        <li><a href="{{ url_for('room_booking') }}"><i class="fa fa-list"></i> Room-Booking</a></li>
+
+        <li>
+            <button class="dropdown-btn">
+                &nbsp;<i class="fa fa-cogs"></i> Management
+                &nbsp;<i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-container">
+                <a href="{{ url_for('room_management') }}"><i class="fa fa-hotel"></i> Room</a>
+                <a href="{{ url_for('guest_management') }}"><i class="fa fa-user"></i> Guest</a>
+                <a href="{{ url_for('amenities_management') }}"><i class="fa fa-cubes"></i> Amenities</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="time-container">
+        <i class="fa fa-clock-o"></i>
+        <span id="singapore-time"></span>
+        <br>
+        <span id="singapore-date"></span>
+    </div>
+    <button class="logout-btn"
+    onclick="window.location.href='{{ url_for('home') }}'" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+    <a href="{{ url_for('logout') }}">
+        <i class="fa fa-power-off"></i> Logout
+    </a>
+    </button>
+</div>
+
+<script>
+    // Singapore Time and Date Update
+    function updateSingaporeTimeAndDate() {
+        const optionsTime = { timeZone: "Asia/Singapore", hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const optionsDate = { timeZone: "Asia/Singapore", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+        const singaporeTime = new Date().toLocaleTimeString("en-US", optionsTime);
+        const singaporeDate = new Date().toLocaleDateString("en-US", optionsDate);
+
+        document.getElementById("singapore-time").innerText = singaporeTime;
+        document.getElementById("singapore-date").innerText = singaporeDate;
+    }
+    setInterval(updateSingaporeTimeAndDate, 1000);
+    updateSingaporeTimeAndDate();
+
+    // Dropdown Menu Toggle
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    for (var i = 0; i < dropdown.length; i++) {
+        dropdown[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var dropdownContent = this.nextElementSibling;
+            dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
+        });
+    }
+</script>
+
+</body>
+</html>

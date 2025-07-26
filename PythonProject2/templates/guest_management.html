@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% block title %}Management - Guest{% endblock %}
+{% block content %}
+{% block styles %}
+<style>
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+
+    .membership-level {
+        font-weight: bold;
+        margin-top: 15px;
+    }
+
+    table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .edit-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .edit-buttons button {
+        padding: 5px 15px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .edit-buttons button:hover {
+        background-color: #0056b3;
+    }
+
+    .edit-buttons button:focus {
+        outline: none;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Add specific background colors for membership levels */
+    .membership-gold {
+        background-color: gold;
+    }
+
+    .membership-silver {
+        background-color: silver;
+    }
+
+    .membership-platinum {
+        background-color: platinum;
+    }
+
+    .membership-bronze {
+        background-color: #cd7f32; /* Bronze color */
+    }
+</style>
+{% endblock %}
+
+<div class="content">
+    <h2>Management → Guest Information</h2>
+
+    <!-- Search by Guest Name -->
+    <div class="form-group">
+        <label for="search-guest-name">Search by Guest Name:</label>
+        <input type="text" id="search-guest-name" class="form-control" placeholder="Enter guest name" oninput="searchGuest()">
+        <div id="search-result" class="error"></div>
+    </div>
+
+    <!-- Table to display guest search results -->
+    <table id="guest-table">
+        <thead>
+            <tr>
+                <th>Guest Name</th>
+                <th>Membership Level</th>
+                <th>Points</th>
+                <th>Phone Number</th>
+                <th>Email Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="guest-table-body">
+            {% if users_db %}
+                {% for user_id, user_data in users_db.items() %}
+                <tr>
+                    <td>{{ user_data.username }}</td>
+                    <td class="membership-{{ user_data.membership_level.lower() }}">{{ user_data.membership_level }} ({{ user_data.points_balance }} points)</td>
+                    <td>{{ user_data.points_balance }}</td>
+                    <td>{{ user_data.phone }}</td>
+                    <td>{{ user_data.email }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal-{{ user_id }}">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+
+    <!-- Modal for this guest -->
+    <div class="modal fade" id="editModal-{{ user_id }}" tabindex="-1" aria-labelledby="editModalLabel-{{ user_id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel-{{ user_id }}">Edit Guest Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm-{{ user_id }}">
+                        <div class="form-group">
+                            <label for="edit-name-{{ user_id }}">Name:</label>
+                            <input type="text" id="edit-name-{{ user_id }}" class="form-control" value="{{ user_data.username }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-phone-{{ user_id }}">Phone Number:</label>
+                            <input type="text" id="edit-phone-{{ user_id }}" class="form-control" value="{{ user_data.phone }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email-{{ user_id }}">Email Address:</label>
+                            <input type="email" id="edit-email-{{ user_id }}" class="form-control" value="{{ user_data.email }}" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges('{{ user_id }}')">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No users found.</p>
+{% endif %}
+
+<script>
+    // Fetch all users from the database
+    let guestDatabase = [];
+    {% for user_id, user_data in users_db.items() %}
+    guestDatabase.push({
+        id: '{{ user_id }}',
+        name: '{{ user_data.username }}',
+        membership_level: '{{ user_data.membership_level }}',
+        points: {{ user_data.points_balance }},
+        phone: '{{ user_data.phone }}',
+        email: '{{ user_data.email }}'
+    });
+    {% endfor %}
+
+    // Search for guest by name (alphabet search)
+    function searchGuest() {
+        const guestName = document.getElementById("search-guest-name").value.trim();
+        const searchResult = document.getElementById("search-result");
+        const guestTableBody = document.getElementById("guest-table-body");
+
+        guestTableBody.innerHTML = ""; // Clear previous data
+        searchResult.textContent = ""; // Clear any previous error message
+
+        // Filter guest database by name
+        const filteredGuests = guestDatabase.filter(guest => guest.name.toLowerCase().includes(guestName.toLowerCase()));
+
+        if (filteredGuests.length > 0) {
+            filteredGuests.forEach(guest => {
+                const row = document.createElement("tr");
+                // Add membership level class to the table row
+                let membershipClass = "";
+                switch (guest.membership_level) {
+                    case "Gold":
+                        membershipClass = "membership-gold";
+                        break;
+                    case "Silver":
+                        membershipClass = "membership-silver";
+                        break;
+                    case "Platinum":
+                        membershipClass = "membership-platinum";
+                        break;
+                    case "Bronze":
+                        membershipClass = "membership-bronze";
+                        break;
+                }
+                row.innerHTML = `
+                    <td>${guest.name}</td>
+                    <td class="${membershipClass}">${guest.membership_level} (${guest.points} points)</td>
+                    <td>${guest.points}</td>
+                    <td>${guest.phone}</td>
+                    <td>${guest.email}</td>
+                    <td>
+                        <button onclick="editGuest('${guest.id}')">Edit</button>
+                    </td>
+                `;
+                guestTableBody.appendChild(row);
+            });
+        } else {
+            searchResult.textContent = "No matching guests found. Please check the name or try a different search term.";
+            searchResult.style.color = "red"; // Add a color for emphasis
+        }
+    }
+
+    function editGuest(guestId) {
+        console.log("Editing guest ID:", guestId);  // Debugging line
+
+        const guest = guestDatabase.find(g => g.id === guestId);
+        if (!guest) {
+            alert("Guest not found!");  // Debugging line
+            return;
+        }
+
+        document.getElementById('edit-name').value = guest.name;
+        document.getElementById('edit-phone').value = guest.phone;
+        document.getElementById('edit-email').value = guest.email;
+
+        // Ensure modal is displayed
+        document.getElementById('editModal').style.display = "block";
+    }
+
+
+
+    // Close the modal
+    function closeModal() {
+        document.getElementById('editModal').style.display = "none";
+    }
+
+    // Validate phone number and email format
+    function validateInput(phone, email) {
+        const phonePattern = /^\d{3}-\d{3}-\d{4}$/; // Example: 123-456-7890
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+         if (password.trim() === "") {
+            alert("Password cannot be empty.");
+            return false;
+        }
+        if (!emailPattern.test(email)) {
+            alert("Invalid email format.");
+            return false;
+        }
+        return true;
+    }
+
+    function saveChanges(userId) {
+        const newPhone = document.getElementById(`edit-phone-${userId}`).value;
+        const newEmail = document.getElementById(`edit-email-${userId}`).value;
+
+        // Validate phone and email inputs
+        if (!validateInput(newPhone, newEmail)) return;
+
+        // Find the guest by ID in the guestDatabase
+        const guest = guestDatabase.find(g => g.id === userId);
+        if (guest) {
+            // Update the guest's phone and email
+            guest.phone = newPhone;
+            guest.email = newEmail;
+
+            // Show success message
+            alert("Guest details updated successfully!");
+
+            // Refresh the guest table to reflect the updated data
+            searchGuest();  // This will re-render the table with updated information
+        } else {
+            alert("Error updating guest.");
+        }
+    }
+
+    // Display all users by default when the page loads
+    window.onload = function() {
+        searchGuest();
+    };
+</script>
+
+{% endblock %}

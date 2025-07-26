@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}Management - Amenities{% endblock %}
+{% block content %}
+{% block styles %}
+{% endblock %}
+<div class="content">
+    <h2>Management → Amenities Booking</h2>
+
+    <form id="amenity-booking-form" method="POST" action="/book_amenity">
+        <div class="form-group">
+            <label for="amenity">Amenity:</label>
+            <input type="text" id="amenity" name="amenity" class="form-control" placeholder="Enter Amenity (e.g., Spa)" required>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="time">Time:</label>
+            <input type="time" id="time" name="time" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="guest_name">Guest Name:</label>
+            <input type="text" id="guest_name" name="guest_name" class="form-control" placeholder="Enter Guest Name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="guest_email">Guest Email:</label>
+            <input type="email" id="guest_email" name="guest_email" class="form-control" placeholder="Enter Guest Email" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Book Amenity</button>
+    </form>
+
+    <h3>Existing Bookings</h3>
+    <div id="bookings-container" class="bookings-container">
+        <!-- Bookings will be loaded dynamically -->
+    </div>
+</div>
+
+<script>
+    async function fetchBookings() {
+        const amenity = document.getElementById("amenity").value;
+        const date = document.getElementById("date").value;
+
+        if (!amenity || !date) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/get_bookings?amenity=${amenity}&date=${date}`);
+            const result = await response.json();
+
+            const bookingsContainer = document.getElementById("bookings-container");
+            bookingsContainer.innerHTML = ""; // Clear previous bookings
+
+            if (result.success && result.bookings.length > 0) {
+                result.bookings.forEach(booking => {
+                    const div = document.createElement("div");
+                    div.className = "booking-item";
+                    div.innerHTML = `
+                        <p><strong>Guest Name:</strong> ${booking.guest_name}</p>
+                        <p><strong>Email:</strong> ${booking.email}</p>
+                        <p><strong>Amenity:</strong> ${booking.amenity}</p>
+                        <p><strong>Date & Time:</strong> ${booking.date_time}</p>
+                        <button class="btn btn-warning edit-button" data-id="${booking.id}">Edit</button>
+                        <button class="btn btn-danger delete-button" data-id="${booking.id}">Delete</button>
+                    `;
+                    bookingsContainer.appendChild(div);
+                });
+
+            } else {
+                bookingsContainer.innerHTML = "<p>No bookings found for the selected date and amenity.</p>";
+            }
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
+        }
+    }
+
+    document.getElementById("amenity").addEventListener("change", fetchBookings);
+    document.getElementById("date").addEventListener("change", fetchBookings);
+
+    document.getElementById("bookings-container").addEventListener("click", async (event) => {
+        if (event.target.classList.contains("delete-button")) {
+            const bookingId = event.target.getAttribute("data-id");
+            try {
+                const response = await fetch(`/delete_booking/${bookingId}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert("Booking deleted successfully!");
+                    fetchBookings();
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        if (event.target.classList.contains("edit-button")) {
+            const bookingId = event.target.getAttribute("data-id");
+            const newTime = prompt("Enter new time for the booking (HH:MM):");
+            if (!newTime) return;
+
+            try {
+                const response = await fetch(`/edit_booking/${bookingId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ time: newTime })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert("Booking updated successfully!");
+                    fetchBookings();
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+    });
+
+    document.getElementById("amenity-booking-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const timeInput = document.getElementById("time").value;
+    let formattedTime = timeInput;
+
+    // Check if the time input is in 'HHMM' format and convert it to 'HH:MM'
+    if (timeInput.length === 4 && !timeInput.includes(":")) {
+        formattedTime = timeInput.slice(0, 2) + ":" + timeInput.slice(2); // Converts "1000" to "10:00"
+    }
+
+    // Ensure the formatted time is in 'HH:MM' format
+    if (!/^\d{2}:\d{2}$/.test(formattedTime)) {
+        alert("Please enter a valid time in HH:MM format.");
+        return;
+    }
+
+    const data = {
+        amenity: document.getElementById("amenity").value,
+        date: document.getElementById("date").value,
+        time: formattedTime, // Use the formatted time here
+        guest_name: document.getElementById("guest_name").value,
+        guest_email: document.getElementById("guest_email").value,
+    };
+
+    try {
+        const response = await fetch("/book_amenity", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        if (result.success) {
+            alert("Amenity booked successfully!");
+            // Optionally, you can reset the form here
+            document.getElementById("amenity-booking-form").reset();
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+});
+
+    // Initial fetch on page load
+    fetchBookings();
+</script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Check-Out{% endblock %}
+{% block content %}
+{% block styles %}
+{% endblock %}
+<div class="content">
+    <h2>Checkout List</h2>
+
+    {% if bookings %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Guest Name</th>
+                    <th>Email</th>
+                    <th>Room Type</th>
+                    <th>Check-Out Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.guest_name }}</td>
+                        <td>{{ booking.email }}</td>
+                        <td>{{ booking.room_type }}</td>
+                        <td>{{ booking.check_out_date }}</td>
+                        <td>
+                            <form action="{{ url_for('checkout', booking_id=booking.id) }}" method="post">
+                                <button type="submit" class="btn btn-danger">Check Out</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No bookings available for checkout.</p>
+    {% endif %}
+</div>
+{% endblock %}

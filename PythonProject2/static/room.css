@@ -1,0 +1,230 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: white; /* White background */
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc; /* Optional border for separation */
+}
+
+nav a {
+    color: black; /* Black text color */
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Position the center logo in the middle of the screen */
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Centers it exactly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    height: 70px; /* Adjust as needed */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain;
+}
+
+.nav-right img {
+    height: 30px;
+    margin-left: 20px;
+}
+
+.cart-btn {
+    text-decoration: none;
+    color: black;
+}
+
+.cart-btn:hover {
+    color: #f0f0f0;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    right: 0;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.home-image {
+    width: 100%; /* Ensures the image fills the screen width */
+    height: 70vh; /* Crops the height to 40% of the viewport */
+    background-image: url('{{ url_for('static', filename='home_image.jpg') }}');
+    background-size: cover; /* Fills the container while maintaining aspect ratio */
+    background-position: center; /* Ensures the image is centered */
+    background-repeat: no-repeat; /* Prevents tiling */
+    margin: 0; /* Removes any margin */
+}
+
+.container {
+    padding: 20px;
+}
+
+.room-card {
+    border: 1px solid #ddd;
+    margin: 20px 0;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-card img {
+    height: 120px;
+    margin-right: 20px;
+}
+
+.room-card h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.room-card p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.room-card .details {
+    flex: 1;
+}
+
+.room-card form {
+    text-align: right;
+}
+
+.room-card form button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.room-card form button:hover {
+    background-color: #0056b3;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto; /* 5% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%; /* 70% of the screen width */
+    max-width: 800px; /* Maximum width */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+}
+
+.modal-image {
+    width: 100%; /* Make the image responsive */
+    max-height: 300px; /* Set a max height for the image */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+    border-radius: 10px; /* Rounded corners for the image */
+}
+
+.amenities-list {
+    max-height: 200px; /* Set a max height for the amenities list */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    padding: 10px;
+    border: 1px solid #ddd; /* Add a border */
+    border-radius: 5px; /* Rounded corners */
+    margin-top: 10px;
+}
+
+.amenities-list ul {
+    list-style-type: disc; /* Add bullet points */
+    padding-left: 20px; /* Indent the list */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.room-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.room-images {
+    display: flex;
+    overflow: hidden;
+    width: 80%;
+    gap: 10px;
+}
+
+.room-image {
+    width: 100px; /* Reduced width */
+    height: 75px; /* Reduced height */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+    border-radius: 10px; /* Rounded corners */
+    transition: transform 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.carousel-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.carousel-button:hover {
+    background: #0056b3;
+}

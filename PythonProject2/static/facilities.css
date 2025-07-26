@@ -1,0 +1,163 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: white; /* White background */
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc; /* Optional border for separation */
+}
+
+nav a {
+    color: black; /* Black text color */
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Position the center logo in the middle of the screen */
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Centers it exactly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    height: 70px; /* Adjust as needed */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain;
+}
+
+.nav-right img {
+    height: 30px;
+    margin-left: 20px;
+}
+
+.cart-btn {
+    text-decoration: none;
+    color: black;
+}
+
+.cart-btn:hover {
+    color: #f0f0f0;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    right: 0;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.home-image {
+    width: 100%; /* Ensures the image fills the screen width */
+    height: 70vh; /* Crops the height to 40% of the viewport */
+    background-image: url('{{ url_for('static', filename='facilities image/gym.png') }}');
+    background-size: cover; /* Fills the container while maintaining aspect ratio */
+    background-position: center; /* Ensures the image is centered */
+    background-repeat: no-repeat; /* Prevents tiling */
+    margin: 0; /* Removes any margin */
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+}
+
+h2 {
+    text-align: center; /* Center the facility headings */
+    color: #34495e;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+.intro-text {
+    text-align: justify;
+    margin-bottom: 30px;
+    color: #555;
+    max-width: 900px; /* Limit the width of the intro text */
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.2em;
+}
+
+hr {
+    border: 1px solid #ddd;
+    margin: 30px auto;
+    max-width: 900px; /* Limit the width of the hr */
+}
+
+.facility {
+    margin-bottom: 40px;
+}
+
+.facility-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 20px;
+    align-items: center; /* Vertically align items in the grid */
+    max-width: 900px; /* Limit the width of the grid */
+    margin: 0 auto;
+}
+
+.facility-content.reverse {
+    grid-template-columns: 1fr 1fr;
+    direction: rtl;
+}
+
+.facility-content.reverse > * {
+    direction: ltr;
+}
+
+.facility img {
+     max-width: 450px; /* Reduced image size to approximately less than half */
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 0 auto; /* Center images */
+}
+
+.facility-text {
+    text-align: left; /* Align text to the left */
+}
+
+.facility p {
+    color: #666;
+    font-size: 1.2em;
+}
+
+.contact-info {
+    font-size: 1em; /* Slightly smaller font size */
+    text-align: center; /* Center the contact info */
+    margin-top: 20px; /* Add some space above */
+}

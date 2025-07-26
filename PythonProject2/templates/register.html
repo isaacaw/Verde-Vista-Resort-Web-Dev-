@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Verde Vista Resort</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}"> <!-- Link to the external login.css file -->
+</head>
+<body>
+
+    {% block content %}
+<div class="register-container">
+    <h1>Welcome<br>to<br>Verde Vista Resort</h1>
+    <form method="POST" action="{{ url_for('register') }}" novalidate>
+        <h2>Register</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required minlength="3"
+                   autocomplete="username" placeholder="Choose a username">
+            <span class="error" id="username-error"></span>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required
+                   autocomplete="email" placeholder="Enter your email">
+            <span class="error" id="email-error"></span>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required minlength="8"
+                   autocomplete="new-password" placeholder="Choose a password">
+            <span class="error" id="password-error"></span>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required
+                   autocomplete="new-password" placeholder="Confirm your password">
+            <span class="error" id="confirm-password-error"></span>
+        </div>
+        <div class="form-group">
+            <label for="phone-number">Phone Number:</label>
+            <input
+              type="tel"
+              id="phone-number"
+              name="phone"
+              placeholder="e.g. 6598765432"
+            />
+            <span class="error" id="phone-error"></span>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <div class="login-link">
+        <p>Already have an account?</p>
+        <a href="{{ url_for('login') }}" class="login-button">Login</a>
+    </div>
+</div>
+
+    <script>
+            function openLoginTab() {
+                window.open("{{ url_for('login') }}", "_blank");
+            }
+    </script>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    let isValid = true;
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const phone = document.getElementById('phone-number');
+
+    if (username.value.length < 3) {
+        document.getElementById('username-error').textContent = 'Username must be at least 3 characters long.';
+        isValid = false;
+    } else {
+        document.getElementById('username-error').textContent = '';
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email address.';
+        isValid = false;
+    } else {
+        document.getElementById('email-error').textContent = '';
+    }
+
+    if (password.value.length < 8) {
+        document.getElementById('password-error').textContent = 'Password must be at least 8 characters long.';
+        isValid = false;
+    } else if (!/[A-Z]/.test(password.value) || !/[a-z]/.test(password.value) || !/\d/.test(password.value) || !/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) {
+        document.getElementById('password-error').textContent = 'Password must contain uppercase, lowercase, number, and special character.';
+        isValid = false;
+    } else {
+        document.getElementById('password-error').textContent = '';
+    }
+
+    if (password.value !== confirmPassword.value) {
+        document.getElementById('confirm-password-error').textContent = 'Passwords do not match.';
+        isValid = false;
+    } else {
+        document.getElementById('confirm-password-error').textContent = '';
+    }
+
+    if (!/^\d{8,}$/.test(phone.value)) {
+        document.getElementById('phone-error').textContent = 'Please enter a valid phone number.';
+        isValid = false;
+    } else {
+        document.getElementById('phone-error').textContent = '';
+    }
+
+    if (!isValid) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}
+
+</body>
+</html>

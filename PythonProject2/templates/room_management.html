@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}Management - Room{% endblock %}
+{% block content %}
+<style>
+    .tabs {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background-color: #f5f5f5;
+        margin-right: 10px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .tab-button.active {
+        background-color: #22423d;
+        color: white;
+        border: 1px solid #22423d;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-buttons {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    /* Error message */
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+
+    /* Total Price */
+    .total-price {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+</style>
+{% block styles %}
+{% endblock %}
+<div class="content">
+    <h2>Management → Room Management</h2>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-button active" data-target="add-room">Add Room</button>
+        <button class="tab-button" data-target="edit-delete-room">Edit/Delete Room</button>
+    </div>
+
+    <!-- Add Room Tab -->
+    <div id="add-room" class="tab-content active">
+        <h3>Add a New Room</h3>
+        <form id="add-room-form" method="POST" action="/add_room">
+            <div class="form-group">
+                <label for="room-type">Room Type:</label>
+                <input type="text" id="room-type" name="room_type" class="form-control" required>
+                <div id="room-type-error" class="error"></div>
+            </div>
+            <div class="form-group">
+                <label for="price">Price per Night:</label>
+                <input type="number" id="price" name="price" class="form-control" required>
+                <div id="price-error" class="error"></div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" class="form-control" required></textarea>
+                <div id="description-error" class="error"></div>
+            </div>
+            <div class="form-group">
+                <label for="image">Image File Name:</label>
+                <input type="file" id="image" name="image" class="form-control" required>
+                <div id="image-error" class="error"></div>
+            </div>
+            <div class="form-group">
+                <label for="amenities">Amenities (comma-separated):</label>
+                <textarea id="amenities" name="amenities" class="form-control" required></textarea>
+                <div id="amenities-error" class="error"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Room</button>
+        </form>
+    </div>
+
+    <!-- Edit/Delete Room Tab -->
+    <div id="edit-delete-room" class="tab-content">
+        <h3>Edit/Delete Rooms</h3>
+        <table id="room-table">
+            <thead>
+                <tr>
+                    <th>Room Type</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Image</th>
+                    <th>Amenities</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room_id, room in rooms_db.items() %}
+                <tr>
+                    <td>{{ room.room_type }}</td>
+                    <td>${{ room.price }}</td>
+                    <td>{{ room.description }}</td>
+                    <td>{{ room.image }}</td>
+                    <td>{{ room.amenities | join(', ') }}</td>
+                    <td>
+                        <button onclick="editRoom('{{ room_id }}')">Edit</button>
+                        <button onclick="deleteRoom('{{ room_id }}')">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for editing room details -->
+<div id="edit-room-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Edit Room</h3>
+        <form id="edit-room-form" method="POST" action="/edit_room">
+            <input type="hidden" id="edit-room-id" name="room_id">
+            <div class="form-group">
+                <label for="edit-room-type">Room Type:</label>
+                <input type="text" id="edit-room-type" name="room_type" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-price">Price:</label>
+                <input type="number" id="edit-price" name="price" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-description">Description:</label>
+                <textarea id="edit-description" name="description" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="edit-image">Image File Name:</label>
+                <input type="text" id="edit-image" name="image" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-amenities">Amenities (comma-separated):</label>
+                <textarea id="edit-amenities" name="amenities" class="form-control" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    // Pass rooms_db data from backend to frontend
+    const rooms_db = {
+        {% for room_id, room in rooms_db.items() %}
+            '{{ room_id }}': {
+                id: '{{ room_id }}',
+                room_type: '{{ room.room_type }}',
+                price: {{ room.price }},
+                description: '{{ room.description }}',
+                image: '{{ room.image }}',
+                amenities: {{ room.amenities | tojson }}
+            },
+        {% endfor %}
+    };
+
+    // Tab navigation functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-target');
+
+            // Deactivate all tabs and content
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Activate the clicked tab and corresponding content
+            button.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+        });
+    });
+
+    // Edit Room Functionality
+    function editRoom(roomId) {
+        const room = rooms_db[roomId];
+        if (room) {
+            document.getElementById("edit-room-id").value = roomId;
+            document.getElementById("edit-room-type").value = room.room_type; // Use room.room_type
+            document.getElementById("edit-price").value = room.price; // Use room.price
+            document.getElementById("edit-description").value = room.description; // Use room.description
+            document.getElementById("edit-image").value = room.image; // Use room.image
+            document.getElementById("edit-amenities").value = room.amenities.join(", "); // Use room.amenities
+
+            // Open the modal
+            document.getElementById('edit-room-modal').style.display = 'block';
+        }
+    }
+
+    // Delete Room Functionality
+    function deleteRoom(roomId) {
+        if (confirm('Are you sure you want to delete this room?')) {
+            fetch(`/delete_room/${roomId}`, {
+                method: 'DELETE',
+            }).then(response => {
+                if (response.ok) {
+                    location.reload(); // Reload the page to reflect changes
+                }
+            });
+        }
+    }
+
+    // Close Modal Functionality
+    function closeModal() {
+        document.getElementById('edit-room-modal').style.display = 'none';
+    }
+</script>
+{% endblock %}

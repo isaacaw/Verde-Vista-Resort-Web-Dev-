@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Check-In{% endblock %}
+{% block content %}
+<div class="content">
+    <h2>Check-In</h2>
+    <form id="checkinForm" method="POST" action="/checkin">
+        <div class="form-group">
+            <label for="guest_name">Guest Name:</label>
+            <input type="text" id="guest_name" name="name" class="form-control" placeholder="Enter Guest Name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="guest_email">Email:</label>
+            <input type="email" id="guest_email" name="email" class="form-control" placeholder="Enter Email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="room_number">Room Number:</label>
+            <input type="text" id="room_number" name="room_number" class="form-control" placeholder="Enter Room Number" required>
+        </div>
+
+        <div class="form-group">
+            <label for="check_in">Check-In Date:</label>
+            <input type="date" id="check_in" name="check_in" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="check_out">Check-Out Date:</label>
+            <input type="date" id="check_out" name="check_out" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Check-In</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const checkinForm = document.getElementById("checkinForm");
+
+    if (checkinForm) {
+        checkinForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(checkinForm);
+            const bookingDetails = {
+                guest_name: formData.get('name'),
+                email: formData.get('email'),
+                room_number: formData.get('room_number'),
+                check_in: formData.get('check_in'),
+                check_out: formData.get('check_out')
+            };
+
+            // First, show booking details and ask for confirmation
+            const result = await Swal.fire({
+                title: 'Confirm Booking Details',
+                html: `
+                    <p><strong>Guest Name:</strong> ${bookingDetails.guest_name}</p>
+                    <p><strong>Email:</strong> ${bookingDetails.email}</p>
+                    <p><strong>Room Number:</strong> ${bookingDetails.room_number}</p>
+                    <p><strong>Check-In Date:</strong> ${bookingDetails.check_in}</p>
+                    <p><strong>Check-Out Date:</strong> ${bookingDetails.check_out}</p>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm Booking',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch("/checkin", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const serverResult = await response.json();
+
+                    if (serverResult.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: serverResult.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        checkinForm.reset();
+                    } else {
+                        throw new Error(serverResult.message);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Error processing check-in. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

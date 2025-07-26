@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{% block styles %}
+{% endblock %}
+<div class="content">
+    <h2>Verde Vista Resort Business Performance For 2024</h2>
+    <div id="combined-chart"></div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Realistic Bookings Data (in number of rooms booked per month)
+    const doubleRoomBookings = [550, 600, 700, 650, 800, 900, 850, 950, 750, 850, 1100, 1200];
+    const twinRoomBookings = [350, 380, 420, 400, 450, 550, 520, 600, 490, 530, 640, 700];
+    const suiteBookings = [220, 240, 280, 250, 300, 320, 310, 350, 290, 310, 380, 430];
+
+    // Monthly Revenue Data (in USD converted to SGD)
+    const monthlyRevenueUSD = {
+        'Jan': 180000, 'Feb': 200000, 'Mar': 220000, 'Apr': 210000, 'May': 250000,
+        'Jun': 270000, 'Jul': 260000, 'Aug': 280000, 'Sep': 230000, 'Oct': 290000,
+        'Nov': 310000, 'Dec': 350000
+    };
+
+    // Conversion rate from USD to SGD
+    const conversionRate = 1.35;
+
+    // Convert revenue from USD to SGD
+    const monthlyRevenueSGD = Object.values(monthlyRevenueUSD).map(value => value * conversionRate);
+
+    const revenueValues = monthlyRevenueSGD; // Revenue values in SGD
+
+    // Sorting room bookings data from highest to lowest for each month
+    const sortedBookings = months.map((month, index) => {
+        const bookings = [
+            { type: 'Double Room', value: doubleRoomBookings[index] },
+            { type: 'Twin Room', value: twinRoomBookings[index] },
+            { type: '2-BedRoom Suite', value: suiteBookings[index] }
+        ];
+        // Sort bookings from highest to lowest
+        bookings.sort((a, b) => b.value - a.value);
+        return bookings;
+    });
+
+    // Extract the sorted room bookings data
+    const sortedDoubleRoomBookings = sortedBookings.map(bookings => bookings.find(b => b.type === 'Double Room').value);
+    const sortedTwinRoomBookings = sortedBookings.map(bookings => bookings.find(b => b.type === 'Twin Room').value);
+    const sortedSuiteBookings = sortedBookings.map(bookings => bookings.find(b => b.type === '2-BedRoom Suite').value);
+
+    // Combined Stacked Bar and Line Chart
+    const barData = [
+        {
+            x: months,
+            y: sortedDoubleRoomBookings,
+            name: 'Double Room',
+            type: 'bar',
+            stackgroup: 'one',
+            hoverinfo: 'x+y+name',
+            marker: { color: 'green' }  // Set the color for Double Room
+        },
+        {
+            x: months,
+            y: sortedSuiteBookings,
+            name: '2-BedRoom Suite',
+            type: 'bar',
+            stackgroup: 'one',
+            hoverinfo: 'x+y+name',
+            marker: { color: 'orange' }  // Set the color for 2-BedRoom Suite
+        },
+        {
+            x: months,
+            y: sortedTwinRoomBookings,
+            name: 'Twin Room',
+            type: 'bar',
+            stackgroup: 'one',
+            hoverinfo: 'x+y+name',
+            marker: { color: 'blue' }  // Set the color for Twin Room
+        }
+    ];
+
+    const lineData = {
+        x: months,
+        y: revenueValues,
+        name: 'Monthly Revenue',
+        type: 'scatter',
+        mode: 'lines+markers',
+        yaxis: 'y2',
+        hoverinfo: 'x+y+name'
+    };
+
+    const combinedData = barData.concat(lineData);
+
+    const layout = {
+        title: 'Monthly Bookings and Revenue (in SGD)',
+        xaxis: { title: 'Month' },
+        yaxis: { title: 'Bookings (Number of Rooms)' },
+        yaxis2: {
+            title: 'Revenue (SGD)',
+            overlaying: 'y',
+            side: 'right'
+        },
+        barmode: 'stack',
+        hovermode: 'closest',  // Changed to 'closest' to remove the middle line
+        legend: {
+            x: 0.5, // Center the legend horizontally
+            y: -0.2, // Move the legend below the graph
+            orientation: 'h', // Arrange the legend horizontally
+            xanchor: 'center', // Anchor the legend to the center
+            yanchor: 'top' // Align the top of the legend with the y position
+        },
+        margin: {
+            r: 80, // Increase right margin for the y-axis
+            t: 100, // Increased top margin to prevent overlap
+            b: 100, // Add more bottom margin to make space for the legend
+            l: 50  // Add some left margin
+        }
+    };
+
+    Plotly.newPlot('combined-chart', combinedData, layout);
+</script>
+{% endblock %}

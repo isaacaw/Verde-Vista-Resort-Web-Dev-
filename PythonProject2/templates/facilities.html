@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facilities - Hotel Website</title>
+
+    <link rel="stylesheet" href="static/facilities.css">
+
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('room') }}">Rooms</a>
+            <a href="{{ url_for('dining') }}">Dining</a>
+            <a href="{{ url_for('facilities') }}">Facilities</a>
+            <a href="{{ url_for('review') }}">Review</a>
+        </div>
+
+        <div class="nav-center">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="logo">
+        </div>
+
+        <div class="nav-right">
+            <a href="{{ url_for('view_cart') }}" class="cart-btn">
+                <img src="{{ url_for('static', filename='cart-icon.png') }}" alt="Cart">
+            </a>
+            <ul>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Profile ▼</a>
+                    <div class="dropdown-content">
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('rewards') }}">Rewards</a>
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}">Login</a>
+                            <a href="{{ url_for('register') }}" target="_blank" class="register-button">Register</a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <img src="{{ url_for('static', filename='facilities image/swimming_pool.png') }}" alt="Swimming Pool" class="home-image">
+
+    <h1>Our Facilities</h1>
+        <p class="intro-text">
+            At Verde Vista Resort, we take pride in offering exceptional facilities designed to make your stay unforgettable.
+            From relaxing in our serene spa to enjoying gourmet dining at our in-house restaurants, every detail is crafted with
+            your comfort in mind. Whether you're here for leisure or business, our amenities cater to all your needs, ensuring a
+            perfect blend of luxury and convenient.
+        </p>
+        <p class="intro-text">
+            Our eco-friendly hotel features sustainable facilities, including energy-efficient meeting rooms, a relaxing swimming
+            pool, a fully equipped gym and more. Each space is designed for comfort and eco-consciousness, providing a green
+            and relaxing experience for every guest.
+        </p>
+
+        <hr>
+
+        <section class="facility">
+            <h2>Swimming Pool</h2>
+            <div class="facility-content">
+                <img src="{{ url_for('static', filename='facilities image/swimming_pool.png') }}" alt="Swimming Pool">
+                <div class="facility-text">
+                    <p>Take a dip in our luxurious pool, perfect for a refreshing swim or lounging. With breathtaking views, poolside cabanas, and a relaxing ambiance, it's an oasis for both relaxation and fun. Open daily from 7:00 AM to 9:00 PM.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="facility">
+            <h2>Gym / Fitness Center</h2>
+            <div class="facility-content reverse">
+                <div class="facility-text">
+                     <p>Stay active during your stay in our fitness center, equipped with the latest cardio machines, free weights and yoga mats. Whether you prefer a vigorous workout or a light stretch, our gym caters to all fitness levels. Open 24/7 for your convenience</p>
+                </div>
+               <img src="{{ url_for('static', filename='facilities image/gym.png') }}" alt="Gym">
+            </div>
+        </section>
+
+        <section class="facility">
+            <h2>Spa</h2>
+            <div class="facility-content">
+                 <img src="{{ url_for('static', filename='facilities image/spa.png') }}" alt="Spa">
+                <div class="facility-text">
+                    <p>Unwind and rejuvenate at our tranquil spa, offering a range of indulgent treatments, including massages, facials and aromatherapy sessions. Experience pure relaxation in a serene environment designed to refresh your mind and body. Advanced bookings recommended for an enhanced experience.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="facility">
+            <h2>Ballroom</h2>
+            <div class="facility-content reverse">
+                <div class="facility-text">
+                    <p>Host your next event in our elegant ballroom, perfect for weddings, corporate gatherings and special celebrations. With a spacious layout, customizable decor and top-notch audio-visual facilities, our ballroom ensures every occasion is memorable and seamless.</p>
+                </div>
+                 <img src="{{ url_for('static', filename='facilities image/ballroom.png') }}" alt="Ballroom">
+            </div>
+        </section>
+
+        <p class="contact-info">Call us at <strong>+65 6234 5678</strong> or email <a href="mailto:info_vvr@verdevistaresort.com">info_vvr@verdevistaresort.com</a> for any reservations.</p>
+
+        <!-- Floating Chatbot Button -->
+    <div id="chatbot-icon">
+        <img src="{{ url_for('static', filename='chatbot.jpg') }}" alt="Chatbot Icon" onclick="toggleChatbot()">
+    </div>
+
+    <!-- Chatbot Popup -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <h3>AI Chatbot</h3>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <input type="text" id="user-input" placeholder="Message AI ChatBot">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+
+
+</body>
+</html>

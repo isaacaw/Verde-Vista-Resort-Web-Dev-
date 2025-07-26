@@ -1,0 +1,191 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+nav {
+    background-color: white; /* White background */
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc; /* Optional border for separation */
+}
+
+nav a {
+    color: black; /* Black text color */
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Position the center logo in the middle of the screen */
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Centers it exactly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    height: 70px; /* Adjust as needed */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain;
+}
+
+.nav-right img {
+    height: 30px;
+    margin-left: 20px;
+}
+
+.cart-btn {
+    text-decoration: none;
+    color: black;
+}
+
+.cart-btn:hover {
+    color: #f0f0f0;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    right: 0;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Profile Section */
+.profile-section {
+    margin-bottom: 33px;
+}
+
+.progress-indicator {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-icon {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+/* Circular Progress Bar */
+.progress-bar {
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Member Info */
+.member-info {
+    margin-top: 11px;
+}
+
+.member-info .level {
+    font-size: 1.3em;
+    margin-bottom: 5.5px;
+}
+
+.member-info .points-balance {
+    font-size: 1.2em;
+}
+
+/* Offers Section */
+.offers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 80px;
+    max-width: 880px;
+    margin: 0 auto;
+}
+
+.offer-card {
+    position: relative;
+}
+
+.coupon-image {
+    width: 100%;
+    height: auto;
+}
+
+.offer-content {
+    position: absolute;
+    top: 45%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+
+.offer-card h3 {
+    margin: 0 0 5.5px;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.offer-card p {
+    margin: 0;
+    color: #666;
+    font-size: 1.1em;
+}
+
+.redeem-button {
+    background-color: #F8DB76;
+    border: none;
+    padding: 10px 20px;
+    margin-top: -10px;
+    cursor: pointer;
+    font-size: 1em;
+    border-radius: 5px;
+}
+
+.progress-indicator svg {
+    cursor: pointer;
+}
+
+.grey-path, .green-path {
+    transition: stroke-width 0.3s ease;
+}
+
+.grey-path:hover, .green-path:hover {
+    stroke-width: 12px;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    pointer-events: none;
+    display: none;
+    z-index: 1000;
+}

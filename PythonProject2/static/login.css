@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/static/login_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container, .register-container {
+    background-color: rgb(255, 255, 255);
+    padding: 20px; /* Reduced padding to shorten height */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 450px; /* Increased width slightly */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px; /* Reduced margin to save space */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 10px; /* Reduced margin to save space */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px; /* Reduced padding for shorter inputs */
+    margin: 6px 0; /* Reduced margin for compact spacing */
+    box-sizing: border-box;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #F8DB76;
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    margin-top: 15px; /* Reduced margin for tighter spacing */
+}
+
+button:hover {
+    background-color: #e5c85e;
+}
+
+.flash-error {
+    color: red;
+    text-align: center;
+    margin-bottom: 5px; /* Reduced margin for compact layout */
+}
+
+.flash-success {
+    color: green;
+    text-align: center;
+    margin-bottom: 5px; /* Reduced margin for compact layout */
+}
+
+.register-link, .login-link {
+    text-align: center;
+    margin-top: 15px; /* Reduced spacing below the form */
+}
+
+.register-link p, .login-link p {
+    margin-bottom: 10px;
+}
+
+.register-button, .login-button {
+    display: inline-block;
+    background-color: #F8DB76;
+    color: black;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.register-button:hover, .login-button:hover {
+    background-color: #e5c85e;
+}
+
+.error {
+    color: red;
+    font-size: 14px; /* Kept small for better fit in the layout */
+    margin-top: 5px; /* Slight spacing above error messages */
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Hotel Website</title>
+    <link rel="stylesheet" href="static/home.css"> <!-- Link to the external home.css file -->
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('room') }}">Rooms</a>
+            <a href="{{ url_for('dining') }}">Dining</a>
+            <a href="{{ url_for('facilities') }}">Facilities</a>
+            <a href="{{ url_for('review') }}">Review</a>
+        </div>
+
+        <div class="nav-center">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="logo">
+        </div>
+
+        <div class="nav-right">
+            <a href="{{ url_for('view_cart') }}" class="cart-btn">
+                <img src="{{ url_for('static', filename='cart-icon.png') }}" alt="Cart">
+            </a>
+            <ul>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Profile ▼</a>
+                    <div class="dropdown-content">
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('rewards') }}">Rewards</a>
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" target="_blank" class="login-button">Login</a>
+                            <a href="{{ url_for('register') }}" target="_blank" class="register-button">Register</a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                <ul class="flash-message-list">
+                    {% for category, message in messages %}
+                        <li class="flash-message {{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
+    <img src="{{ url_for('static', filename='home_image.jpg') }}" alt="Hotel View" class="home-image">
+
+    <!-- Main content -->
+    <div class="container">
+        <h1>Welcome to Our Hotel</h1>
+        <p>Experience luxury, comfort, and convenience with our state-of-the-art facilities and personalized service. Whether you're here for business or leisure, we promise to make your stay memorable.</p>
+
+        <!-- Introduction Section -->
+        <div class="intro-section">
+            <h2>Why Choose Us?</h2>
+            <p>Our hotel offers a range of world-class amenities, including spacious rooms, a variety of dining options, and a prime location for exploring the city. Whether you're looking to relax or explore, we've got something for everyone!</p>
+            <p>Book your stay today and enjoy an unforgettable experience.</p>
+        </div>
+    </div>
+
+    <!-- Floating Chatbot Button -->
+    <div id="chatbot-icon">
+        <img src="{{ url_for('static', filename='chatbot.jpg') }}" alt="Chatbot Icon" onclick="toggleChatbot()">
+    </div>
+
+    <!-- Chatbot Popup -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <h3>AI Chatbot</h3>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <input type="text" id="user-input" placeholder="Message AI ChatBot">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+
+
+</body>
+</html>

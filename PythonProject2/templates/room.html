@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms - Hotel Website</title>
+    <link rel="stylesheet" href="static/room.css"> <!-- Link to the external home.css file -->
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('room') }}">Rooms</a>
+            <a href="{{ url_for('dining') }}">Dining</a>
+            <a href="{{ url_for('facilities') }}">Facilities</a>
+            <a href="{{ url_for('review') }}">Review</a>
+        </div>
+
+        <div class="nav-center">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="logo">
+        </div>
+
+        <div class="nav-right">
+            <a href="{{ url_for('view_cart') }}" class="cart-btn">
+                <img src="{{ url_for('static', filename='cart-icon.png') }}" alt="Cart">
+            </a>
+            <ul>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Profile ▼</a>
+                    <div class="dropdown-content">
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('rewards') }}">Rewards</a>
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" target="_blank" class="login-button">Login</a>
+                            <a href="{{ url_for('register') }}" target="_blank" class="register-button">Register</a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <img src="{{ url_for('static', filename='home_image.jpg') }}" alt="Hotel View" class="home-image">
+
+    <!-- Main content -->
+    <div class="container">
+        <h1>Available Rooms</h1>
+        <div class="rooms-list">
+            {% if rooms %}
+                {% for room in rooms %}
+                    <div class="room-card">
+                        <!-- Use url_for to reference images in the static folder -->
+                        <img src="{{ url_for('static', filename='room_images/' + room.image) }}" alt="{{ room.type }}">
+                        <div class="details">
+                            <h3>{{ room.room_type }}</h3>
+                            <p><strong>Price per Night:</strong> ${{ room.price }}</p>
+                            <p><strong>Description:</strong> {{ room.description }}</p>
+                            <!-- View Details Button -->
+                            <button class="view-details-btn" onclick="openModal('{{ room.id }}')">View Details</button>
+                        </div>
+                        <form action="{{ url_for('select_room') }}" method="POST">
+                            <input type="hidden" name="room_id" value="{{ room.id }}">
+                            <label for="check_in_date">Check-in:</label>
+                            <input type="date" name="check_in_date" required><br>
+                            <label for="check_out_date">Check-out:</label>
+                            <input type="date" name="check_out_date" required><br><br>
+                            <button type="submit">Add to Cart</button>
+                        </form>
+                    </div>
+
+                    <div id="modal-{{ room.id }}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal('{{ room.id }}')">&times;</span>
+                            <h2>{{ room.room_type }}</h2>
+                            <img class="modal-image" src="{{ url_for('static', filename='room_images/' + room.image) }}" alt="{{ room.room_type }}">
+
+                            <h3>Room Images:</h3>
+                            <div class="room-carousel">
+                                <button class="carousel-button prev-button" onclick="prevImage('{{ room.id }}')">&lt;&lt;</button>
+                                <div class="room-images">
+                                    {% for extra_image in room.extra_images %}
+                                        <img src="{{ url_for('static', filename='room_images/' + extra_image) }}" alt="Room Image" class="room-image enlargeable-image">
+                                    {% endfor %}
+                                </div>
+                                <button class="carousel-button next-button" onclick="nextImage('{{ room.id }}')">&gt;&gt;</button>
+                            </div>
+
+                            <p><strong>Price per Night:</strong> ${{ room.price }}</p>
+                            <p><strong>Description:</strong> {{ room.description }}</p>
+                            <h3>Amenities:</h3>
+                            <div class="amenities-list">
+                                <ul>
+                                    {% for amenity in room.amenities %}
+                                        <li>{{ amenity }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No rooms available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+<script src="{{ url_for('static', filename='room.js') }}"></script>
+
+    <!-- Floating Chatbot Button -->
+    <div id="chatbot-icon">
+        <img src="{{ url_for('static', filename='chatbot.jpg') }}" alt="Chatbot Icon" onclick="toggleChatbot()">
+    </div>
+
+    <!-- Chatbot Popup -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <h3>AI Chatbot</h3>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <input type="text" id="user-input" placeholder="Message AI ChatBot">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+
+
+</body>
+</html>
